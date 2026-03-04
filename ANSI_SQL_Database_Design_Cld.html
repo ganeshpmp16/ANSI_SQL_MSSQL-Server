@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANSI SQL & Database Design — Professional Tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Calibri:wght@400;700&family=Consolas&display=swap" rel="stylesheet">
+<style>
+  /* ── Page / Print Setup ── */
+  @page {
+    size: A4;
+    margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+  }
+  @media print {
+    .page-break { page-break-before: always; }
+    body { background: white; }
+    .page { box-shadow: none; margin: 0; border-radius: 0; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8e8e8;
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    color: #2c2c2c;
+    line-height: 1.6;
+  }
+
+  /* ── Word-like page container ── */
+  .page {
+    background: #ffffff;
+    max-width: 21cm;
+    margin: 30px auto;
+    padding: 2.5cm 2.5cm 2.5cm 2.5cm;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    border-radius: 2px;
+  }
+
+  /* ── Cover / Title ── */
+  .cover-banner {
+    background: #1a3a5c;
+    color: white;
+    text-align: center;
+    padding: 32px 24px 24px;
+    margin-bottom: 0;
+    border-radius: 3px 3px 0 0;
+  }
+  .cover-banner h1 {
+    font-size: 26pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    color: #ffffff;
+  }
+  .cover-banner .subtitle {
+    font-size: 12pt;
+    color: #a8c4e0;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .cover-banner .subtitle2 {
+    font-size: 10pt;
+    color: #7aa8cc;
+  }
+  .cover-strip {
+    background: #2e6db4;
+    height: 6px;
+    margin-bottom: 24px;
+  }
+
+  /* ── TOC ── */
+  .toc-box {
+    background: #ebf2fa;
+    border-left: 5px solid #2e6db4;
+    border-radius: 0 4px 4px 0;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .toc-box h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #2e6db4;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .toc-box ol { padding-left: 0; list-style: none; }
+  .toc-box li {
+    padding: 3px 0;
+    font-size: 11pt;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .toc-num {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #2e6db4;
+    min-width: 28px;
+  }
+  .toc-title { color: #2c2c2c; }
+
+  /* ── Section Heading ── */
+  .section-heading {
+    background: #2e6db4;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 3px;
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    page-break-after: avoid;
+  }
+  .section-num-badge {
+    background: rgba(255,255,255,0.2);
+    font-family: 'Consolas', monospace;
+    font-size: 11pt;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .section-heading h2 {
+    font-size: 14pt;
+    font-weight: 700;
+    color: white;
+  }
+
+  /* ── Sub-heading ── */
+  .sub-heading {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #0d7a5f;
+    margin: 18px 0 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    page-break-after: avoid;
+  }
+  .sub-heading::before {
+    content: '▸';
+    color: #e3b341;
+    font-size: 10pt;
+  }
+
+  /* ── Body text ── */
+  p.body-text {
+    font-size: 11pt;
+    color: #2c2c2c;
+    margin-bottom: 8px;
+    line-height: 1.65;
+  }
+
+  /* ── Callout ── */
+  .callout {
+    background: #e8f4fd;
+    border-left: 4px solid #2e6db4;
+    border-radius: 0 4px 4px 0;
+    padding: 10px 16px;
+    margin: 10px 0 12px;
+    font-size: 10.5pt;
+    color: #2c2c2c;
+  }
+  .callout.green  { background: #e8f7ee; border-color: #0d7a5f; }
+  .callout.yellow { background: #fdf7e3; border-color: #c9921a; }
+  .callout.red    { background: #fdecea; border-color: #c0392b; }
+  .callout strong { color: #2e6db4; }
+  .callout.green strong  { color: #0d7a5f; }
+  .callout.yellow strong { color: #c9921a; }
+  .callout.red strong    { color: #c0392b; }
+
+  /* ── Code block ── */
+  .code-label {
+    background: #d0dcf0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    color: #334466;
+    padding: 5px 14px;
+    border-radius: 3px 3px 0 0;
+    letter-spacing: 0.5px;
+    margin-top: 12px;
+  }
+  pre.code {
+    background: #f4f6f9;
+    border: 1px solid #dde3ee;
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    line-height: 1.55;
+    padding: 14px 18px;
+    overflow-x: auto;
+    color: #1e1e2e;
+    margin-bottom: 12px;
+    white-space: pre;
+    tab-size: 4;
+  }
+  .cmt  { color: #7f8c8d; font-style: italic; }
+  .kw   { color: #c0392b; font-weight: bold; }
+  .ty   { color: #8e5a00; }
+  .str  { color: #1565c0; }
+  .num  { color: #1a6b1a; }
+
+  /* ── Data table ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  .data-table th {
+    background: #1a3a5c;
+    color: white;
+    font-weight: 700;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 9.5pt;
+    letter-spacing: 0.3px;
+  }
+  .data-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #dde3ee;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .data-table tr:nth-child(even) td { background: #ebf2fa; }
+  .data-table tr:hover td { background: #ddeeff; }
+  .data-table code {
+    font-family: 'Consolas', monospace;
+    font-size: 8.5pt;
+    background: #eef1f7;
+    color: #c0392b;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── Normalization stages ── */
+  .nf-table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+  .nf-table td { padding: 10px 14px; border-bottom: 1px solid #dde3ee; vertical-align: top; font-size: 10.5pt; }
+  .nf-table tr:nth-child(even) td { background: #f7f9fc; }
+  .nf-badge {
+    display: inline-block;
+    background: #2e6db4;
+    color: white;
+    font-family: 'Consolas', monospace;
+    font-size: 9.5pt;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .nf-title { font-weight: 700; color: #1a3a5c; margin-bottom: 3px; font-size: 10.5pt; }
+  .nf-desc { color: #555; font-size: 10pt; }
+
+  /* ── Step grid ── */
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 12px 0 16px;
+  }
+  .step-card {
+    background: #f7f9fc;
+    border: 1px solid #dde3ee;
+    border-top: 3px solid #2e6db4;
+    border-radius: 3px;
+    padding: 12px;
+  }
+  .step-card .snum {
+    font-size: 20pt;
+    font-weight: 700;
+    color: rgba(46,109,180,0.2);
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+  .step-card h4 { font-size: 9.5pt; font-weight: 700; color: #0d7a5f; margin-bottom: 4px; }
+  .step-card p  { font-size: 8.5pt; color: #666; margin: 0; line-height: 1.4; }
+
+  /* ── ERD diagram ── */
+  .erd-wrap {
+    background: #f7f9fc;
+    border: 1px solid #dde3ee;
+    border-radius: 4px;
+    padding: 18px;
+    margin: 12px 0 16px;
+  }
+  .erd-wrap h4 {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .erd-flex { display: flex; align-items: flex-start; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .entity {
+    border: 2px solid #2e6db4;
+    border-radius: 4px;
+    min-width: 160px;
+    overflow: hidden;
+  }
+  .entity-head {
+    background: #2e6db4;
+    color: white;
+    font-family: 'Consolas', monospace;
+    font-size: 9.5pt;
+    font-weight: 700;
+    text-align: center;
+    padding: 6px 10px;
+  }
+  .entity-row {
+    padding: 4px 12px;
+    font-family: 'Consolas', monospace;
+    font-size: 8.5pt;
+    border-bottom: 1px solid #dde3ee;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .entity-row:last-child { border-bottom: none; }
+  .pk  { color: #c9921a; font-weight: 700; }
+  .fk  { color: #c0392b; }
+  .atype { color: #888; font-size: 8pt; }
+  .rel-label {
+    background: #fdf7e3;
+    border: 1px solid #c9921a;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-family: 'Consolas', monospace;
+    font-size: 8.5pt;
+    color: #c9921a;
+    font-weight: 700;
+    text-align: center;
+    align-self: center;
+  }
+  .junction-note {
+    text-align: center;
+    margin-top: 12px;
+    background: #fff;
+    border: 1px solid #dde3ee;
+    border-radius: 4px;
+    padding: 7px 14px;
+    font-family: 'Consolas', monospace;
+    font-size: 8.5pt;
+    color: #555;
+  }
+
+  /* ── Type cards ── */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 12px 0 16px;
+  }
+  .type-card {
+    border: 1px solid #dde3ee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .type-card-head {
+    padding: 8px 14px;
+    font-size: 10pt;
+    font-weight: 700;
+    border-bottom: 1px solid #dde3ee;
+  }
+  .type-card-body { padding: 8px 14px; }
+  .type-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 3px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: 'Consolas', monospace;
+    font-size: 8.5pt;
+  }
+  .type-row:last-child { border-bottom: none; }
+  .tname { color: #8e5a00; font-weight: 600; }
+  .tdesc { color: #777; font-size: 8pt; text-align: right; }
+
+  /* ── Divider ── */
+  hr.divider {
+    border: none;
+    border-top: 2px solid #2e6db4;
+    margin: 28px 0 0;
+    opacity: 0.3;
+  }
+  .footer-strip {
+    background: #1a3a5c;
+    color: #7aa8cc;
+    font-size: 8.5pt;
+    text-align: center;
+    padding: 8px 16px;
+    border-radius: 0 0 3px 3px;
+    margin-top: 28px;
+    font-style: italic;
+  }
+
+  /* ── Page break utility ── */
+  .page-break { page-break-before: always; margin-top: 0; }
+
+  /* inline code */
+  code { font-family: 'Consolas', monospace; font-size: 8.5pt; background: #eef1f7; color: #c0392b; padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ COVER ══ -->
+  <div class="cover-banner">
+    <h1>ANSI SQL &amp; Database Design</h1>
+    <p class="subtitle">A Complete Professional Tutorial</p>
+    <p class="subtitle2">SQL Sublanguages &nbsp;·&nbsp; Data Modelling &nbsp;·&nbsp; Schema Design &nbsp;·&nbsp; Normalization &nbsp;·&nbsp; Data Types</p>
+  </div>
+  <div class="cover-strip"></div>
+
+  <!-- ══ TABLE OF CONTENTS ══ -->
+  <div class="toc-box">
+    <h3>📋 &nbsp;Table of Contents</h3>
+    <ol>
+      <li><span class="toc-num">01</span><span class="toc-title">Overview of ANSI SQL</span></li>
+      <li><span class="toc-num">02</span><span class="toc-title">Introduction to Database Design</span></li>
+      <li><span class="toc-num">03</span><span class="toc-title">Data Modelling Process</span></li>
+      <li><span class="toc-num">04</span><span class="toc-title">Database Design</span></li>
+      <li><span class="toc-num">05</span><span class="toc-title">Design Considerations</span></li>
+      <li><span class="toc-num">06</span><span class="toc-title">Data Types</span></li>
+    </ol>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: ANSI SQL                                        -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="section-heading">
+    <span class="section-num-badge">01</span>
+    <h2>Overview of ANSI SQL</h2>
+  </div>
+
+  <div class="sub-heading">What is ANSI SQL?</div>
+  <p class="body-text">ANSI SQL (American National Standards Institute Structured Query Language) is the standardized language for managing relational databases. First standardized in 1986, it defines a common syntax and set of operations that all major database systems — MySQL, PostgreSQL, Oracle, SQL Server, SQLite — must support. While vendors add proprietary extensions, ANSI SQL is the universal baseline.</p>
+  <div class="callout"><strong>Key Standards:</strong> SQL-86 → SQL-92 → SQL:1999 → SQL:2003 → SQL:2016 → SQL:2023. Each version added features like JOINs, stored procedures, window functions, triggers, and JSON support.</div>
+
+  <table class="data-table">
+    <tr><th>Standard</th><th>Year</th><th>Major Additions</th></tr>
+    <tr><td>SQL-86</td><td>1986</td><td>First standard — basic SELECT, INSERT, UPDATE, DELETE</td></tr>
+    <tr><td>SQL-92</td><td>1992</td><td>JOINs, CASE, CAST, string functions, subqueries</td></tr>
+    <tr><td>SQL:1999</td><td>1999</td><td>Regular expressions, triggers, recursive queries, OOP features</td></tr>
+    <tr><td>SQL:2003</td><td>2003</td><td>XML support, window functions, sequences, MERGE</td></tr>
+    <tr><td>SQL:2011</td><td>2011</td><td>Temporal tables, OFFSET/FETCH pagination</td></tr>
+    <tr><td>SQL:2016</td><td>2016</td><td>JSON support, row pattern matching</td></tr>
+  </table>
+
+  <div class="sub-heading">The Five SQL Sub-Languages</div>
+  <p class="body-text">ANSI SQL is divided into five categories, each serving a distinct purpose in database management.</p>
+
+  <div class="code-label">▸ SQL — DDL: Data Definition Language (CREATE, ALTER, DROP, TRUNCATE)</div>
+<pre class="code"><span class="cmt">-- DDL defines the STRUCTURE of the database (schema)</span>
+
+<span class="kw">CREATE TABLE</span> employees (
+    employee_id   <span class="ty">INT</span>           <span class="kw">PRIMARY KEY</span>,
+    first_name    <span class="ty">VARCHAR</span>(50)   <span class="kw">NOT NULL</span>,
+    last_name     <span class="ty">VARCHAR</span>(50)   <span class="kw">NOT NULL</span>,
+    hire_date     <span class="ty">DATE</span>,
+    salary        <span class="ty">DECIMAL</span>(10,2),
+    department_id <span class="ty">INT</span>           <span class="kw">REFERENCES</span> departments(dept_id)
+);
+
+<span class="kw">ALTER TABLE</span> employees
+    <span class="kw">ADD COLUMN</span>   email   <span class="ty">VARCHAR</span>(100),
+    <span class="kw">DROP COLUMN</span>  old_field;
+
+<span class="kw">TRUNCATE TABLE</span> log_archive;    <span class="cmt">-- removes all rows, keeps structure</span>
+<span class="kw">DROP TABLE IF EXISTS</span> temp_data; <span class="cmt">-- permanently removes table</span>
+
+<span class="kw">CREATE INDEX</span> idx_last_name <span class="kw">ON</span> employees(last_name);
+<span class="kw">CREATE UNIQUE INDEX</span> idx_email <span class="kw">ON</span> employees(email);</pre>
+
+  <div class="code-label">▸ SQL — DML: Data Manipulation Language (INSERT, SELECT, UPDATE, DELETE, MERGE)</div>
+<pre class="code"><span class="cmt">-- INSERT multiple rows at once</span>
+<span class="kw">INSERT INTO</span> employees (employee_id, first_name, last_name, salary) <span class="kw">VALUES</span>
+    (1, <span class="str">'Alice'</span>, <span class="str">'Johnson'</span>, <span class="num">75000.00</span>),
+    (2, <span class="str">'Bob'</span>,   <span class="str">'Smith'</span>,   <span class="num">68000.00</span>),
+    (3, <span class="str">'Carol'</span>, <span class="str">'White'</span>,   <span class="num">82000.00</span>);
+
+<span class="cmt">-- SELECT with filtering, sorting</span>
+<span class="kw">SELECT</span> first_name, last_name, salary
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  salary > <span class="num">70000</span>
+<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>;
+
+<span class="cmt">-- UPDATE with calculation</span>
+<span class="kw">UPDATE</span> employees
+<span class="kw">SET</span>    salary = salary * <span class="num">1.10</span>,           <span class="cmt">-- 10% raise</span>
+       email  = <span class="str">'alice@company.com'</span>
+<span class="kw">WHERE</span>  employee_id = <span class="num">1</span>;
+
+<span class="cmt">-- DELETE with condition</span>
+<span class="kw">DELETE FROM</span> employees
+<span class="kw">WHERE</span> hire_date < <span class="str">'2000-01-01'</span>;
+
+<span class="cmt">-- MERGE (upsert) — insert or update based on match</span>
+<span class="kw">MERGE INTO</span> employees <span class="kw">AS</span> target
+<span class="kw">USING</span> new_hires <span class="kw">AS</span> source <span class="kw">ON</span> target.employee_id = source.employee_id
+<span class="kw">WHEN MATCHED THEN</span>     <span class="kw">UPDATE SET</span> salary = source.salary
+<span class="kw">WHEN NOT MATCHED THEN</span> <span class="kw">INSERT</span> (employee_id, first_name, salary)
+                       <span class="kw">VALUES</span> (source.employee_id, source.first_name, source.salary);</pre>
+
+  <div class="code-label">▸ SQL — DCL &amp; TCL: Permissions and Transactions</div>
+<pre class="code"><span class="cmt">-- DCL: Data Control Language — manage access</span>
+<span class="kw">GRANT</span>  <span class="kw">SELECT</span>, <span class="kw">INSERT</span> <span class="kw">ON</span> employees <span class="kw">TO</span> analyst_role;
+<span class="kw">REVOKE DELETE</span>          <span class="kw">ON</span> employees <span class="kw">FROM</span> intern_role;
+
+<span class="cmt">-- TCL: Transaction Control — atomic units of work</span>
+<span class="kw">BEGIN</span>;
+    <span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance - <span class="num">500</span> <span class="kw">WHERE</span> account_id = <span class="num">101</span>; <span class="cmt">-- Debit</span>
+    <span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance + <span class="num">500</span> <span class="kw">WHERE</span> account_id = <span class="num">202</span>; <span class="cmt">-- Credit</span>
+<span class="kw">COMMIT</span>;    <span class="cmt">-- both succeed together</span>
+<span class="kw">ROLLBACK</span>;  <span class="cmt">-- or undo everything on error</span>
+
+<span class="kw">SAVEPOINT</span> step_one;
+<span class="kw">ROLLBACK TO</span> step_one; <span class="cmt">-- partial rollback to named checkpoint</span></pre>
+
+  <div class="code-label">▸ SQL — DQL: The Full SELECT Anatomy</div>
+<pre class="code"><span class="kw">SELECT</span>   d.dept_name,
+         COUNT(e.employee_id) <span class="kw">AS</span> headcount,
+         AVG(e.salary)        <span class="kw">AS</span> avg_salary,
+         MAX(e.salary)        <span class="kw">AS</span> top_salary
+<span class="kw">FROM</span>     employees  e                          <span class="cmt">-- main table with alias</span>
+<span class="kw">JOIN</span>     departments d <span class="kw">ON</span> e.department_id = d.dept_id
+<span class="kw">WHERE</span>    e.hire_date >= <span class="str">'2020-01-01'</span>          <span class="cmt">-- filter rows</span>
+<span class="kw">GROUP BY</span> d.dept_name                           <span class="cmt">-- group for aggregation</span>
+<span class="kw">HAVING</span>   COUNT(e.employee_id) > <span class="num">5</span>             <span class="cmt">-- filter groups</span>
+<span class="kw">ORDER BY</span> avg_salary <span class="kw">DESC</span>                       <span class="cmt">-- sort results</span>
+<span class="kw">LIMIT</span>    <span class="num">10</span>;                                   <span class="cmt">-- paginate output</span></pre>
+
+  <div class="sub-heading">SQL JOINs</div>
+  <p class="body-text">JOINs combine rows from two or more tables based on a related column. They are one of the most powerful features of relational databases.</p>
+
+  <div class="code-label">▸ SQL — All JOIN Types with Examples</div>
+<pre class="code"><span class="cmt">-- INNER JOIN: only matching rows from BOTH tables</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span>   employees e
+<span class="kw">INNER JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;
+
+<span class="cmt">-- LEFT JOIN: ALL rows from left; NULL dept_name if no match</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span>   employees e
+<span class="kw">LEFT JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;
+
+<span class="cmt">-- FULL OUTER JOIN: all rows from both sides, NULLs where no match</span>
+<span class="kw">SELECT</span> e.name, d.dept_name
+<span class="kw">FROM</span>   employees e
+<span class="kw">FULL OUTER JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;
+
+<span class="cmt">-- SELF JOIN: table joins itself (manager-employee hierarchy)</span>
+<span class="kw">SELECT</span> e.name <span class="kw">AS</span> employee, m.name <span class="kw">AS</span> manager
+<span class="kw">FROM</span>   employees e
+<span class="kw">LEFT JOIN</span> employees m <span class="kw">ON</span> e.manager_id = m.emp_id;</pre>
+
+  <div class="sub-heading">CTEs and Window Functions (SQL:2003+)</div>
+  <div class="code-label">▸ SQL — Advanced Query Features</div>
+<pre class="code"><span class="cmt">-- CTE: Common Table Expression — readable named subquery</span>
+<span class="kw">WITH</span> dept_averages <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> dept_id, AVG(salary) <span class="kw">AS</span> avg_sal
+    <span class="kw">FROM</span>   employees <span class="kw">GROUP BY</span> dept_id
+)
+<span class="kw">SELECT</span> e.name, e.salary, d.avg_sal
+<span class="kw">FROM</span>   employees e
+<span class="kw">JOIN</span>   dept_averages d <span class="kw">ON</span> e.dept_id = d.dept_id
+<span class="kw">WHERE</span>  e.salary > d.avg_sal;  <span class="cmt">-- employees earning above dept average</span>
+
+<span class="cmt">-- Window Functions: rank without collapsing rows</span>
+<span class="kw">SELECT</span> name, salary,
+    RANK()       <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept_id <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> dept_rank,
+    ROW_NUMBER() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>)                      <span class="kw">AS</span> overall_rank,
+    SUM(salary)  <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> dept_id)                       <span class="kw">AS</span> dept_total,
+    LAG(salary)  <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> hire_date)                         <span class="kw">AS</span> prev_salary
+<span class="kw">FROM</span> employees;</pre>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+  <div class="section-heading">
+    <span class="section-num-badge">02</span>
+    <h2>Introduction to Database Design</h2>
+  </div>
+
+  <div class="sub-heading">What is Database Design?</div>
+  <p class="body-text">Database design is the process of structuring a database so that it accurately reflects real-world entities, minimizes redundancy, enforces data integrity, and enables efficient queries. Poor design leads to <strong>update anomalies</strong> (changing one fact requires many row updates), <strong>insertion anomalies</strong> (can't add data without unrelated data), and <strong>deletion anomalies</strong> (deleting a row accidentally removes other important facts).</p>
+  <div class="callout green"><strong>The Goal:</strong> Design a database that accurately reflects real-world entities and relationships, minimizes data duplication, enforces data integrity, and allows efficient access to data at all times.</div>
+
+  <table class="data-table">
+    <tr><th>Design Quality</th><th>Good Design</th><th>Bad Design</th></tr>
+    <tr><td>Redundancy</td><td>Each fact stored exactly once</td><td>Same data repeated in many places</td></tr>
+    <tr><td>Integrity</td><td>Constraints enforce valid data</td><td>Invalid data can be entered freely</td></tr>
+    <tr><td>Flexibility</td><td>Easy to add new features</td><td>Every change requires major rework</td></tr>
+    <tr><td>Performance</td><td>Queries run efficiently with indexes</td><td>Queries must scan entire tables</td></tr>
+    <tr><td>Maintenance</td><td>Updates touch exactly one place</td><td>Updates must be repeated everywhere</td></tr>
+  </table>
+
+  <div class="sub-heading">Core Concepts: Entities, Keys &amp; Relationships</div>
+  <p class="body-text"><strong>Entity</strong> — a real-world object we store data about: Customer, Product, Order, Employee.<br>
+  <strong>Attribute</strong> — a property or characteristic of an entity: customer_id, email, name, hire_date.<br>
+  <strong>Primary Key (PK)</strong> — uniquely identifies every row. Must be NOT NULL and UNIQUE. Should be stable and not change over time.<br>
+  <strong>Foreign Key (FK)</strong> — a column referencing the PK of another table, enforcing referential integrity.<br>
+  <strong>Cardinality</strong> — the nature of a relationship: One-to-One (1:1), One-to-Many (1:N), or Many-to-Many (M:N).</p>
+
+  <div class="code-label">▸ SQL — Core Concepts in Practice</div>
+<pre class="code"><span class="cmt">-- PRIMARY KEY: uniquely identifies each row</span>
+<span class="kw">CREATE TABLE</span> customers (
+    customer_id <span class="ty">INT</span>          <span class="kw">PRIMARY KEY</span>,      <span class="cmt">-- surrogate key</span>
+    email       <span class="ty">VARCHAR</span>(255) <span class="kw">UNIQUE NOT NULL</span>,  <span class="cmt">-- candidate key</span>
+    name        <span class="ty">VARCHAR</span>(100) <span class="kw">NOT NULL</span>
+);
+
+<span class="cmt">-- FOREIGN KEY: enforces referential integrity (1:N relationship)</span>
+<span class="kw">CREATE TABLE</span> orders (
+    order_id    <span class="ty">INT</span>  <span class="kw">PRIMARY KEY</span>,
+    customer_id <span class="ty">INT</span>  <span class="kw">NOT NULL</span>,
+    order_date  <span class="ty">DATE</span>,
+    <span class="kw">FOREIGN KEY</span> (customer_id) <span class="kw">REFERENCES</span> customers(customer_id)
+        <span class="kw">ON DELETE RESTRICT</span>   <span class="cmt">-- prevent deleting customer with orders</span>
+        <span class="kw">ON UPDATE CASCADE</span>    <span class="cmt">-- update FK when PK changes</span>
+);
+
+<span class="cmt">-- MANY-TO-MANY requires a JUNCTION TABLE</span>
+<span class="cmt">-- Students enroll in many courses; courses have many students</span>
+<span class="kw">CREATE TABLE</span> student_courses (
+    student_id <span class="ty">INT</span>  <span class="kw">REFERENCES</span> students(student_id),
+    course_id  <span class="ty">INT</span>  <span class="kw">REFERENCES</span> courses(course_id),
+    enrolled   <span class="ty">DATE</span>,
+    grade      <span class="ty">CHAR</span>(2),
+    <span class="kw">PRIMARY KEY</span> (student_id, course_id)  <span class="cmt">-- composite primary key</span>
+);</pre>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+  <div class="section-heading">
+    <span class="section-num-badge">03</span>
+    <h2>Data Modelling Process</h2>
+  </div>
+
+  <div class="sub-heading">Three Levels of Data Models</div>
+  <p class="body-text">Data modelling moves through three levels of abstraction — from a high-level business view down to the physical database implementation. Each level adds more technical detail.</p>
+
+  <table class="data-table">
+    <tr><th>Level</th><th>Model Name</th><th>Purpose</th><th>Technical Detail</th></tr>
+    <tr><td>1</td><td>Conceptual Model</td><td>Business-level overview; stakeholder communication</td><td>None — boxes and lines only</td></tr>
+    <tr><td>2</td><td>Logical Model</td><td>Attributes, PKs/FKs, cardinalities; normalization</td><td>Platform-independent</td></tr>
+    <tr><td>3</td><td>Physical Model</td><td>Actual SQL, data types, indexes, storage optimization</td><td>Database-specific</td></tr>
+  </table>
+  <div class="callout yellow"><strong>Rule of Thumb:</strong> Conceptual answers "What?" — Logical answers "How is it structured?" — Physical answers "How is it stored and optimized?"</div>
+
+  <div class="sub-heading">Entity-Relationship Diagram (ERD) — E-Commerce Example</div>
+  <div class="erd-wrap">
+    <h4>📐 E-Commerce Database ERD</h4>
+    <div class="erd-flex">
+      <div class="entity">
+        <div class="entity-head">CUSTOMER</div>
+        <div class="entity-row"><span class="pk">🔑 customer_id</span><span class="atype">INT (PK)</span></div>
+        <div class="entity-row"><span>first_name</span><span class="atype">VARCHAR(50)</span></div>
+        <div class="entity-row"><span>last_name</span><span class="atype">VARCHAR(50)</span></div>
+        <div class="entity-row"><span>email</span><span class="atype">VARCHAR(100)</span></div>
+        <div class="entity-row"><span>created_at</span><span class="atype">DATETIME</span></div>
+      </div>
+      <div class="rel-label">places<br>1 : N</div>
+      <div class="entity">
+        <div class="entity-head">ORDER</div>
+        <div class="entity-row"><span class="pk">🔑 order_id</span><span class="atype">INT (PK)</span></div>
+        <div class="entity-row"><span class="fk">🔗 customer_id</span><span class="atype">INT (FK)</span></div>
+        <div class="entity-row"><span>order_date</span><span class="atype">DATE</span></div>
+        <div class="entity-row"><span>total_amount</span><span class="atype">DECIMAL(10,2)</span></div>
+        <div class="entity-row"><span>status</span><span class="atype">VARCHAR(20)</span></div>
+      </div>
+      <div class="rel-label">contains<br>N : M</div>
+      <div class="entity">
+        <div class="entity-head">PRODUCT</div>
+        <div class="entity-row"><span class="pk">🔑 product_id</span><span class="atype">INT (PK)</span></div>
+        <div class="entity-row"><span class="fk">🔗 category_id</span><span class="atype">INT (FK)</span></div>
+        <div class="entity-row"><span>product_name</span><span class="atype">VARCHAR(100)</span></div>
+        <div class="entity-row"><span>price</span><span class="atype">DECIMAL(8,2)</span></div>
+        <div class="entity-row"><span>stock_qty</span><span class="atype">INT</span></div>
+      </div>
+    </div>
+    <div class="junction-note">ORDER_ITEMS (junction table) &nbsp;·&nbsp; order_id + product_id + quantity + unit_price &nbsp;·&nbsp; Composite PK: (order_id, product_id)</div>
+  </div>
+
+  <div class="sub-heading">Normalization — Eliminating Redundancy</div>
+  <p class="body-text">Normalization organizes a database through a series of increasingly strict "Normal Forms" (NF) to reduce data redundancy and prevent data anomalies.</p>
+
+  <table class="nf-table">
+    <tr>
+      <td style="width:70px;"><span class="nf-badge">1NF</span></td>
+      <td>
+        <div class="nf-title">First Normal Form — Atomic Values</div>
+        <div class="nf-desc">Each column must hold a single, indivisible value. No comma-separated lists or repeating groups. Every row must be uniquely identifiable.<br>
+        ❌ <code>phone = "555-1234, 555-5678"</code> &nbsp;→&nbsp; ✅ Create a separate Phone table with one row per number.</div>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="nf-badge">2NF</span></td>
+      <td>
+        <div class="nf-title">Second Normal Form — Full Functional Dependency</div>
+        <div class="nf-desc">Must be in 1NF. Every non-key column must depend on the <em>entire</em> primary key. Critical when the PK is composite.<br>
+        ❌ <code>ORDER_ITEMS(order_id, product_id, product_name)</code> — product_name depends only on product_id, not the full PK. Move it to Products.</div>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="nf-badge">3NF</span></td>
+      <td>
+        <div class="nf-title">Third Normal Form — No Transitive Dependencies</div>
+        <div class="nf-desc">Must be in 2NF. Non-key columns must depend <em>only</em> on the primary key, not on other non-key columns.<br>
+        ❌ <code>EMPLOYEES(emp_id, dept_id, dept_name)</code> — dept_name depends on dept_id, not emp_id. Solution: a separate Departments table.</div>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="nf-badge">BCNF</span></td>
+      <td>
+        <div class="nf-title">Boyce-Codd Normal Form — Strict 3NF</div>
+        <div class="nf-desc">Every determinant must be a candidate key. Resolves edge cases where multiple overlapping candidate keys exist in one table.</div>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="nf-badge">4NF / 5NF</span></td>
+      <td>
+        <div class="nf-title">Higher Normal Forms</div>
+        <div class="nf-desc">4NF eliminates multi-valued dependencies. 5NF eliminates join dependencies. Rarely required in everyday practice but important for relational theory.</div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+  <div class="section-heading">
+    <span class="section-num-badge">04</span>
+    <h2>Database Design</h2>
+  </div>
+
+  <div class="sub-heading">The Design Process — Step by Step</div>
+  <div class="step-grid">
+    <div class="step-card"><div class="snum">01</div><h4>Requirements Analysis</h4><p>Interview stakeholders; document business rules, data volumes and usage patterns.</p></div>
+    <div class="step-card"><div class="snum">02</div><h4>Identify Entities</h4><p>Find real-world objects to store — look for nouns: Customer, Product, Invoice.</p></div>
+    <div class="step-card"><div class="snum">03</div><h4>Define Relationships</h4><p>How entities relate — look for verbs: "places", "contains", "manages".</p></div>
+    <div class="step-card"><div class="snum">04</div><h4>Define Attributes</h4><p>List all properties per entity; mark mandatory vs optional fields.</p></div>
+    <div class="step-card"><div class="snum">05</div><h4>Choose Primary Keys</h4><p>Select or generate unique identifiers; prefer stable surrogate keys.</p></div>
+    <div class="step-card"><div class="snum">06</div><h4>Normalize</h4><p>Apply 1NF through 3NF to eliminate redundancy and anomalies.</p></div>
+    <div class="step-card"><div class="snum">07</div><h4>Add Constraints</h4><p>NOT NULL, UNIQUE, CHECK, and FOREIGN KEY to enforce business rules.</p></div>
+    <div class="step-card"><div class="snum">08</div><h4>Optimize &amp; Index</h4><p>Add indexes on frequently queried columns; denormalize only where proven necessary.</p></div>
+  </div>
+
+  <div class="sub-heading">Complete Schema Example — Library System</div>
+  <div class="code-label">▸ SQL — Library Database Schema with Queries</div>
+<pre class="code"><span class="kw">CREATE TABLE</span> authors (
+    author_id   <span class="ty">SERIAL</span>        <span class="kw">PRIMARY KEY</span>,
+    full_name   <span class="ty">VARCHAR</span>(150)  <span class="kw">NOT NULL</span>,
+    birth_year  <span class="ty">SMALLINT</span>,
+    nationality <span class="ty">VARCHAR</span>(60)
+);
+
+<span class="kw">CREATE TABLE</span> books (
+    book_id       <span class="ty">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,
+    isbn          <span class="ty">CHAR</span>(13)     <span class="kw">UNIQUE NOT NULL</span>,
+    title         <span class="ty">VARCHAR</span>(250) <span class="kw">NOT NULL</span>,
+    author_id     <span class="ty">INT</span>          <span class="kw">REFERENCES</span> authors(author_id),
+    genre         <span class="ty">VARCHAR</span>(50),
+    published_yr  <span class="ty">SMALLINT</span>,
+    total_copies  <span class="ty">INT</span>          <span class="kw">DEFAULT</span> 1  <span class="kw">CHECK</span> (total_copies >= 0)
+);
+
+<span class="kw">CREATE TABLE</span> members (
+    member_id <span class="ty">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,
+    name      <span class="ty">VARCHAR</span>(100) <span class="kw">NOT NULL</span>,
+    email     <span class="ty">VARCHAR</span>(150) <span class="kw">UNIQUE NOT NULL</span>,
+    joined_on <span class="ty">DATE</span>         <span class="kw">DEFAULT CURRENT_DATE</span>,
+    is_active <span class="ty">BOOLEAN</span>      <span class="kw">DEFAULT TRUE</span>
+);
+
+<span class="kw">CREATE TABLE</span> loans (
+    loan_id     <span class="ty">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+    book_id     <span class="ty">INT</span>    <span class="kw">NOT NULL REFERENCES</span> books(book_id),
+    member_id   <span class="ty">INT</span>    <span class="kw">NOT NULL REFERENCES</span> members(member_id),
+    loan_date   <span class="ty">DATE</span>   <span class="kw">NOT NULL DEFAULT CURRENT_DATE</span>,
+    due_date    <span class="ty">DATE</span>   <span class="kw">NOT NULL</span>,
+    return_date <span class="ty">DATE</span>,  <span class="cmt">-- NULL = still on loan</span>
+    <span class="kw">CHECK</span> (due_date > loan_date)
+);
+
+<span class="cmt">-- Performance indexes</span>
+<span class="kw">CREATE INDEX</span> idx_loans_member <span class="kw">ON</span> loans(member_id);
+<span class="kw">CREATE INDEX</span> idx_loans_book   <span class="kw">ON</span> loans(book_id);
+
+<span class="cmt">-- Query: who has overdue books right now?</span>
+<span class="kw">SELECT</span> m.name, m.email, b.title, l.due_date,
+       CURRENT_DATE - l.due_date <span class="kw">AS</span> days_overdue
+<span class="kw">FROM</span>  loans l
+<span class="kw">JOIN</span>  members m <span class="kw">ON</span> l.member_id = m.member_id
+<span class="kw">JOIN</span>  books   b <span class="kw">ON</span> l.book_id   = b.book_id
+<span class="kw">WHERE</span> l.return_date <span class="kw">IS NULL</span>
+  <span class="kw">AND</span> l.due_date < CURRENT_DATE
+<span class="kw">ORDER BY</span> days_overdue <span class="kw">DESC</span>;</pre>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+  <div class="section-heading">
+    <span class="section-num-badge">05</span>
+    <h2>Design Considerations</h2>
+  </div>
+
+  <div class="sub-heading">1. Integrity Constraints</div>
+  <p class="body-text">Constraints enforce business rules at the database engine level — not just in application code. This creates a reliable safety net regardless of how data enters the database.</p>
+  <div class="code-label">▸ SQL — All Constraint Types</div>
+<pre class="code"><span class="kw">CREATE TABLE</span> products (
+    product_id <span class="ty">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,
+    sku        <span class="ty">VARCHAR</span>(20)  <span class="kw">UNIQUE NOT NULL</span>,                        <span class="cmt">-- UNIQUE + NOT NULL</span>
+    name       <span class="ty">VARCHAR</span>(200) <span class="kw">NOT NULL</span>,                               <span class="cmt">-- mandatory field</span>
+    price      <span class="ty">DECIMAL</span>(8,2) <span class="kw">CHECK</span> (price > 0),                     <span class="cmt">-- must be positive</span>
+    stock      <span class="ty">INT</span>          <span class="kw">DEFAULT</span> 0  <span class="kw">CHECK</span> (stock >= 0),         <span class="cmt">-- default + check</span>
+    category   <span class="ty">VARCHAR</span>(50)  <span class="kw">CHECK</span> (category <span class="kw">IN</span> (<span class="str">'Electronics'</span>,<span class="str">'Clothing'</span>,<span class="str">'Books'</span>)),
+    created_at <span class="ty">TIMESTAMP</span>    <span class="kw">DEFAULT NOW</span>()
+);
+
+<span class="cmt">-- Named constraints (can be dropped later by name)</span>
+<span class="kw">ALTER TABLE</span> products
+    <span class="kw">ADD CONSTRAINT</span> chk_price <span class="kw">CHECK</span> (price > 0);
+
+<span class="cmt">-- FK referential actions: CASCADE | SET NULL | RESTRICT | NO ACTION</span>
+<span class="kw">ALTER TABLE</span> orders
+    <span class="kw">ADD CONSTRAINT</span> fk_orders_customer
+    <span class="kw">FOREIGN KEY</span> (customer_id) <span class="kw">REFERENCES</span> customers(id)
+    <span class="kw">ON DELETE RESTRICT</span>   <span class="cmt">-- prevent deleting a customer who has orders</span>
+    <span class="kw">ON UPDATE CASCADE</span>;   <span class="cmt">-- update FK automatically when PK changes</span></pre>
+
+  <div class="sub-heading">2. Indexing Strategy</div>
+  <p class="body-text">Indexes dramatically speed up SELECT queries but slow down INSERT, UPDATE, and DELETE. Strategic indexing is one of the most impactful performance decisions in database design.</p>
+  <div class="callout"><strong>Auto-indexed:</strong> Primary Key and UNIQUE constraint columns. &nbsp;<strong>Manually index:</strong> Foreign key columns, WHERE columns, JOIN conditions, ORDER BY / GROUP BY columns.</div>
+  <div class="code-label">▸ SQL — Indexing Best Practices</div>
+<pre class="code"><span class="cmt">-- Single-column index on frequently searched field</span>
+<span class="kw">CREATE INDEX</span> idx_last_name <span class="kw">ON</span> employees(last_name);
+
+<span class="cmt">-- Composite index — most selective (highest cardinality) column first</span>
+<span class="kw">CREATE INDEX</span> idx_orders_cust_date <span class="kw">ON</span> orders(customer_id, order_date);
+
+<span class="cmt">-- Partial index — only indexes rows matching a condition (saves space)</span>
+<span class="kw">CREATE INDEX</span> idx_open_loans <span class="kw">ON</span> loans(book_id)
+    <span class="kw">WHERE</span> return_date <span class="kw">IS NULL</span>;  <span class="cmt">-- only active (unreturned) loans</span>
+
+<span class="cmt">-- Covering index — satisfies entire query from the index alone</span>
+<span class="cmt">-- Query: SELECT name, email FROM customers WHERE status = 'active'</span>
+<span class="kw">CREATE INDEX</span> idx_covering <span class="kw">ON</span> customers(status) <span class="kw">INCLUDE</span> (name, email);
+<span class="cmt">-- No table lookup needed — fastest possible read!</span>
+
+<span class="cmt">-- Analyze query performance</span>
+<span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> customer_id = <span class="num">42</span> <span class="kw">ORDER BY</span> order_date;
+<span class="cmt">-- Seq Scan = slow  |  Index Scan = good  |  Index Only Scan = best</span>
+
+<span class="cmt">-- AVOID indexing: low-cardinality columns (boolean, 3-value status),
+-- columns never used in WHERE/JOIN/ORDER BY, write-heavy tables</span></pre>
+
+  <div class="sub-heading">3. Normalization vs Denormalization</div>
+  <div class="callout yellow"><strong>Rule:</strong> Normalize first. Denormalize only where you have measured a real performance need. Premature denormalization creates maintenance nightmares.</div>
+  <table class="data-table">
+    <tr><th>Approach</th><th>Pros</th><th>Cons</th><th>Best For</th></tr>
+    <tr><td>Normalized (3NF)</td><td>No redundancy; easy updates; data integrity</td><td>More JOINs; slower complex reads</td><td>OLTP — transactional systems</td></tr>
+    <tr><td>Denormalized</td><td>Faster reads; fewer JOINs; simpler queries</td><td>Data duplication; complex updates; inconsistency risk</td><td>OLAP — analytics / reporting</td></tr>
+    <tr><td>Hybrid</td><td>Balance of read speed and data integrity</td><td>Requires careful planning and documentation</td><td>Most real-world applications</td></tr>
+  </table>
+
+  <div class="sub-heading">4. Surrogate vs Natural Keys</div>
+  <div class="code-label">▸ SQL — Key Strategy Comparison</div>
+<pre class="code"><span class="cmt">-- NATURAL KEY: uses real-world meaningful data</span>
+<span class="kw">CREATE TABLE</span> countries (
+    iso_code <span class="ty">CHAR</span>(2)      <span class="kw">PRIMARY KEY</span>,  <span class="cmt">-- 'US', 'GB'</span>
+    name     <span class="ty">VARCHAR</span>(100)
+);
+<span class="cmt">-- ✅ Human-readable and already unique
+-- ❌ Can change; hard to use as FK across distributed systems</span>
+
+<span class="cmt">-- SURROGATE KEY: system-generated, meaningless integer</span>
+<span class="kw">CREATE TABLE</span> customers (
+    customer_id <span class="ty">SERIAL</span>       <span class="kw">PRIMARY KEY</span>,  <span class="cmt">-- 1, 2, 3...</span>
+    email       <span class="ty">VARCHAR</span>(200) <span class="kw">UNIQUE</span>,
+    name        <span class="ty">VARCHAR</span>(100)
+);
+<span class="cmt">-- ✅ Stable; compact INT (4 bytes); no business logic leaks into PK
+-- ❌ Meaningless without looking up the row</span>
+
+<span class="cmt">-- UUID: globally unique surrogate key for distributed systems</span>
+<span class="kw">CREATE TABLE</span> sessions (
+    session_id <span class="ty">UUID</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+    user_id    <span class="ty">INT</span>  <span class="kw">REFERENCES</span> users(user_id)
+);
+<span class="cmt">-- ✅ Globally unique; no coordination needed across servers
+-- ❌ 16 bytes vs 4 bytes — more storage; slightly slower joins</span></pre>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6                                                  -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+  <div class="section-heading">
+    <span class="section-num-badge">06</span>
+    <h2>Data Types</h2>
+  </div>
+
+  <div class="sub-heading">Core ANSI SQL Data Type Categories</div>
+  <div class="type-grid">
+    <div class="type-card">
+      <div class="type-card-head" style="background:#fdf7e3;color:#8e5a00;">🔢 Numeric Types</div>
+      <div class="type-card-body">
+        <div class="type-row"><span class="tname">TINYINT</span><span class="tdesc">-128 to 127 (1 byte)</span></div>
+        <div class="type-row"><span class="tname">SMALLINT</span><span class="tdesc">±32,767 (2 bytes)</span></div>
+        <div class="type-row"><span class="tname">INT / INTEGER</span><span class="tdesc">±2.1 billion (4 bytes)</span></div>
+        <div class="type-row"><span class="tname">BIGINT</span><span class="tdesc">Very large integers (8 bytes)</span></div>
+        <div class="type-row"><span class="tname">DECIMAL(p,s)</span><span class="tdesc">Exact fixed-point — use for money</span></div>
+        <div class="type-row"><span class="tname">FLOAT / REAL</span><span class="tdesc">Approximate (never for money!)</span></div>
+        <div class="type-row"><span class="tname">DOUBLE PRECISION</span><span class="tdesc">8-byte approx. float</span></div>
+      </div>
+    </div>
+    <div class="type-card">
+      <div class="type-card-head" style="background:#ebf2fa;color:#1a3a5c;">📝 Character / String Types</div>
+      <div class="type-card-body">
+        <div class="type-row"><span class="tname">CHAR(n)</span><span class="tdesc">Fixed-length, right-padded</span></div>
+        <div class="type-row"><span class="tname">VARCHAR(n)</span><span class="tdesc">Variable-length, max n chars</span></div>
+        <div class="type-row"><span class="tname">TEXT</span><span class="tdesc">Unlimited length</span></div>
+        <div class="type-row"><span class="tname">NCHAR(n)</span><span class="tdesc">Fixed-length Unicode</span></div>
+        <div class="type-row"><span class="tname">NVARCHAR(n)</span><span class="tdesc">Variable-length Unicode</span></div>
+        <div class="type-row"><span class="tname">CLOB</span><span class="tdesc">Character Large OBject</span></div>
+      </div>
+    </div>
+    <div class="type-card">
+      <div class="type-card-head" style="background:#e8f7ee;color:#0d7a5f;">📅 Date &amp; Time Types</div>
+      <div class="type-card-body">
+        <div class="type-row"><span class="tname">DATE</span><span class="tdesc">YYYY-MM-DD only</span></div>
+        <div class="type-row"><span class="tname">TIME</span><span class="tdesc">HH:MM:SS only</span></div>
+        <div class="type-row"><span class="tname">DATETIME</span><span class="tdesc">Date + Time (no timezone)</span></div>
+        <div class="type-row"><span class="tname">TIMESTAMP / TIMESTAMPTZ</span><span class="tdesc">Date + Time + Timezone ✅</span></div>
+        <div class="type-row"><span class="tname">INTERVAL</span><span class="tdesc">Duration value</span></div>
+        <div class="type-row"><span class="tname">YEAR</span><span class="tdesc">Year value only</span></div>
+      </div>
+    </div>
+    <div class="type-card">
+      <div class="type-card-head" style="background:#fdecea;color:#c0392b;">🗄 Boolean &amp; Special Types</div>
+      <div class="type-card-body">
+        <div class="type-row"><span class="tname">BOOLEAN</span><span class="tdesc">TRUE / FALSE / NULL</span></div>
+        <div class="type-row"><span class="tname">UUID</span><span class="tdesc">128-bit unique identifier</span></div>
+        <div class="type-row"><span class="tname">JSON / JSONB</span><span class="tdesc">JSON document storage</span></div>
+        <div class="type-row"><span class="tname">XML</span><span class="tdesc">XML document storage</span></div>
+        <div class="type-row"><span class="tname">BLOB</span><span class="tdesc">Binary Large OBject</span></div>
+        <div class="type-row"><span class="tname">ARRAY</span><span class="tdesc">Array of a base type</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-heading">Choosing the Right Data Type</div>
+  <div class="code-label">▸ SQL — Data Type Selection with Reasoning</div>
+<pre class="code"><span class="cmt">-- NUMERIC: DECIMAL for money — NEVER float (imprecise!)</span>
+price       <span class="ty">DECIMAL</span>(10,2)  <span class="cmt">-- up to 99,999,999.99 — exact ✅</span>
+price       <span class="ty">FLOAT</span>          <span class="cmt">-- 0.1 + 0.2 = 0.30000000004  ❌ Never for money!</span>
+
+<span class="cmt">-- SMALLINT for small bounded numbers (saves space vs INT)</span>
+age         <span class="ty">SMALLINT</span>       <span class="cmt">-- 0 to 150</span>
+star_rating <span class="ty">TINYINT</span>        <span class="cmt">-- 1 to 5</span>
+page_views  <span class="ty">BIGINT</span>         <span class="cmt">-- could exceed 2 billion — use BIGINT</span>
+
+<span class="cmt">-- STRING: CHAR for fixed-length codes (always padded to exact length)</span>
+country_code <span class="ty">CHAR</span>(2)       <span class="cmt">-- 'US', 'GB' — always exactly 2 chars</span>
+phone_code   <span class="ty">CHAR</span>(3)       <span class="cmt">-- '+44'</span>
+
+<span class="cmt">-- VARCHAR for variable text with a known upper bound</span>
+email        <span class="ty">VARCHAR</span>(254)  <span class="cmt">-- RFC 5321 maximum email length</span>
+username     <span class="ty">VARCHAR</span>(50)   <span class="cmt">-- typical username max</span>
+description  <span class="ty">TEXT</span>          <span class="cmt">-- no arbitrary limit needed</span>
+
+<span class="cmt">-- DATE/TIME: always use TIMESTAMPTZ for events</span>
+created_at   <span class="ty">TIMESTAMPTZ</span>   <span class="cmt">-- '2024-03-15 14:30:00+05:30' ✅</span>
+created_at   <span class="ty">DATETIME</span>      <span class="cmt">-- loses timezone info — dangerous! ❌</span>
+birth_date   <span class="ty">DATE</span>          <span class="cmt">-- no time needed for birthdays</span>
+
+<span class="cmt">-- INTERVAL for date arithmetic</span>
+<span class="kw">SELECT</span> hire_date + <span class="kw">INTERVAL</span> <span class="str">'90 days'</span> <span class="kw">AS</span> probation_ends <span class="kw">FROM</span> employees;
+
+<span class="cmt">-- BOOLEAN — semantic clarity over TINYINT(1)</span>
+is_active   <span class="ty">BOOLEAN</span> <span class="kw">DEFAULT TRUE</span>
+is_verified <span class="ty">BOOLEAN</span> <span class="kw">DEFAULT FALSE</span>
+
+<span class="cmt">-- JSONB for flexible/semi-structured data (PostgreSQL)</span>
+<span class="kw">CREATE TABLE</span> products (
+    product_id <span class="ty">SERIAL</span>      <span class="kw">PRIMARY KEY</span>,
+    name       <span class="ty">VARCHAR</span>(200),
+    metadata   <span class="ty">JSONB</span>        <span class="cmt">-- {"color":"red","size":"XL","weight":0.5}</span>
+);
+<span class="kw">SELECT</span> name, metadata->><span class="str">'color'</span> <span class="kw">AS</span> color
+<span class="kw">FROM</span>   products
+<span class="kw">WHERE</span>  metadata @> <span class="str">'{"size":"XL"}'</span>;  <span class="cmt">-- JSON containment query</span></pre>
+
+  <div class="sub-heading">Data Type Quick-Reference Guide</div>
+  <table class="data-table">
+    <tr><th>Use Case</th><th>Recommended Type</th><th>Reason</th></tr>
+    <tr><td>Auto-increment primary key</td><td><code>SERIAL</code> / <code>INT AUTO_INCREMENT</code></td><td>Efficient, compact, auto-generated</td></tr>
+    <tr><td>Money / currency values</td><td><code>DECIMAL(10,2)</code></td><td>Exact arithmetic — no floating-point errors</td></tr>
+    <tr><td>Email address</td><td><code>VARCHAR(254)</code></td><td>RFC 5321 maximum email length</td></tr>
+    <tr><td>Country code</td><td><code>CHAR(2)</code></td><td>ISO 3166 — always exactly 2 characters</td></tr>
+    <tr><td>Yes / No flags</td><td><code>BOOLEAN</code></td><td>Semantic clarity over <code>TINYINT(1)</code></td></tr>
+    <tr><td>Event timestamps</td><td><code>TIMESTAMPTZ</code></td><td>Always preserve timezone information</td></tr>
+    <tr><td>Distributed system IDs</td><td><code>UUID</code></td><td>Globally unique; no coordination needed</td></tr>
+    <tr><td>Long text content</td><td><code>TEXT</code></td><td>No arbitrary length limit required</td></tr>
+    <tr><td>Phone number</td><td><code>VARCHAR(20)</code></td><td>Must preserve leading zeros &amp; + prefix</td></tr>
+    <tr><td>GPS coordinates</td><td><code>DECIMAL(9,6)</code></td><td>Sufficient precision for lat/lng values</td></tr>
+    <tr><td>Password storage</td><td><code>VARCHAR(255)</code> (hashed)</td><td>Store bcrypt hash only — NEVER plain text</td></tr>
+    <tr><td>File or image</td><td><code>VARCHAR</code> (path / URL)</td><td>Store files on disk/S3; save the path only</td></tr>
+  </table>
+
+  <div class="callout red"><strong>⚠ Common Mistakes to Avoid:</strong> Never store phone numbers as <code>INT</code> — you lose leading zeros and the + prefix. Never use <code>FLOAT</code> or <code>REAL</code> for currency — use <code>DECIMAL</code>. Never store passwords as plain text. Do not default to <code>VARCHAR(255)</code> for every column — choose appropriate lengths based on actual data needs.</div>
+
+  <!-- ══ FOOTER ══ -->
+  <hr class="divider">
+  <div class="footer-strip">
+    ANSI SQL &amp; Database Design Tutorial &nbsp;·&nbsp; SQL Sublanguages &nbsp;·&nbsp; Data Modelling &nbsp;·&nbsp; Schema Design &nbsp;·&nbsp; Normalization &nbsp;·&nbsp; Data Types
+  </div>
+
+</div><!-- end .page -->
+</body>
+</html>
